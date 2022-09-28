@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /actuator/prometheus
+    prometheus.io/port: springport
+  labels:
+    name: java-led
+    release: prometheus
+  name: java-led
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java-led
+  template:
+    metadata:
+      labels:
+        app: java-led
+    spec:
+      containers:
+      - name: java-led
+        image: linuxrobotgeek/java-led:latest
+        imagePullPolicy: Always
+        ports:
+        - name: springport
+          containerPort: 8080
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: java-led
+  labels:
+    app: java-led
+spec:
+  selector:
+    app: java-led
+  ports:
+    - name: java-led
+      protocol: TCP
+      port: 8080
+      targetPort: springport
+  type: LoadBalancer
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: java-led
+  namespace: monitoring
+  labels:
+    app: java-led
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: java-led
+  endpoints:
+  - port: java-led
+    path: /actuator/prometheus
+    interval: 15s
+  namespaceSelector:
+    matchNames:
+    - default

@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: java-led
+  namespace: argocd
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: demo/kubernetes
+    repoURL: https://github.com/sentairanger/Spring-Boot-LED-Monitoring
+    targetRevision: HEAD
+  syncPolicy: {}
