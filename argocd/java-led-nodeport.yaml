@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: demo/kubernetes
+    path: kubernetes
     repoURL: https://github.com/sentairanger/Spring-Boot-LED-Monitoring
     targetRevision: HEAD
   syncPolicy: {}
